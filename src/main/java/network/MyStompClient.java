@@ -9,48 +9,42 @@ import org.springframework.web.socket.sockjs.client.SockJsClient;
 import org.springframework.web.socket.sockjs.client.Transport;
 import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MyStompClient {
-    private StompSession session;
-    private String username;
+    private static final String WS_URL = "https://multiplayersystemwithspringbootandrender.onrender.com/ws";
+
+    private final StompSession session;
+    private final String username;
 
     public MyStompClient(MessageListener messageListener, String username) throws ExecutionException, InterruptedException {
         this.username = username;
 
-        List<Transport> transports = new ArrayList<>();
-        transports.add(new WebSocketTransport(new StandardWebSocketClient()));
-
+        List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
         SockJsClient sockJsClient = new SockJsClient(transports);
+
         WebSocketStompClient stompClient = new WebSocketStompClient(sockJsClient);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
 
         StompSessionHandler sessionHandler = new MyStompSessionHandler(messageListener, username);
-        String url = "https://multiplayersystemwithspringbootandrender.onrender.com/ws"; // Use ws:// for WebSocket
 
-        session = stompClient.connectAsync(url, sessionHandler).get();
+        this.session = stompClient.connectAsync(WS_URL, sessionHandler).get();
     }
 
     public void sendMessage(Message message) {
         try {
             session.send("/app/message", message);
-            System.out.println("Message Sent: " + message.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void disconnectUser(String username) {
-        session.send("/app/disconnect", username);
-        System.out.println("Disconnect User: " + username);
+        try {
+            session.send("/app/disconnect", username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
-
-
-
-
-
-
-

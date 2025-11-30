@@ -22,7 +22,7 @@ public class AccountManager {
 
     private Map<String, UserAccount> loadAccounts() {
         File file = new File(ACCOUNT_FILE);
-        if(!file.exists()) return new HashMap<>();
+        if (!file.exists()) return new HashMap<>();
         try {
             return objectMapper.readValue(file, new TypeReference<Map<String, UserAccount>>() {});
         } catch (IOException e) {
@@ -40,7 +40,7 @@ public class AccountManager {
     }
 
     public boolean registerAccount(String username, String password, int wins, int losses) {
-        if(accounts.containsKey(username)) return false;
+        if (accounts.containsKey(username)) return false;
         String hashedPassword = hashPassword(password);
         accounts.put(username, new UserAccount(username, hashedPassword, wins, losses));
         saveAccounts();
@@ -48,7 +48,7 @@ public class AccountManager {
     }
 
     public boolean validateLogin(String username, String password) {
-        if(!accounts.containsKey(username)) return false;
+        if (!accounts.containsKey(username)) return false;
         UserAccount account = accounts.get(username);
         String hashedPassword = hashPassword(password);
         return account.getHashedPassword().equals(hashedPassword);
@@ -58,12 +58,18 @@ public class AccountManager {
         return accounts.get(username);
     }
 
+    public String getMatchmakingBracket(String username) {
+        UserAccount acc = accounts.get(username);
+        if (acc == null) return null;
+        return acc.getMatchmakingBracket();
+    }
+
     private String hashPassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = md.digest(password.getBytes());
             StringBuilder sb = new StringBuilder();
-            for(byte b : hashBytes){
+            for (byte b : hashBytes) {
                 sb.append(String.format("%02x", b));
             }
             return sb.toString();

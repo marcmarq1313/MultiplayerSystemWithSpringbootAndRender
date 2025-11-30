@@ -9,7 +9,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class ClientGUI extends JFrame implements MessageListener {
@@ -166,7 +166,7 @@ public class ClientGUI extends JFrame implements MessageListener {
 
 
     @Override
-    public void onMessageRecieve(Message message){
+    public void onMessageReceive(Message message){
         if(messagePanel == null) return;
         messagePanel.add(createChatMessageComponent(message));
         revalidate();
@@ -175,7 +175,7 @@ public class ClientGUI extends JFrame implements MessageListener {
     }
 
     @Override
-    public void onActiveUsersUpdated(ArrayList<String> users){
+    public void onActiveUsersUpdated(List<String> users) {
         if(connectedUsersPanel == null) return;
 
         if(connectedUsersPanel.getComponents().length >= 2){

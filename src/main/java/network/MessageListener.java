@@ -1,8 +1,10 @@
 package network;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface MessageListener {
-    void onMessageRecieve(Message message);
-    void onActiveUsersUpdated(ArrayList<String> users);
+
+    void onMessageReceive(Message message);
+
+    void onActiveUsersUpdated(List<String> users);
 }

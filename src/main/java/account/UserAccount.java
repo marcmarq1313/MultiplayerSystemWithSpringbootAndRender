@@ -1,17 +1,20 @@
 package account;
 
 import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UserAccount {
     private String username;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String hashedPassword;
+
     private int wins;
     private int losses;
 
-    // Default constructor needed for Jackson
     public UserAccount() {
     }
 
@@ -26,7 +29,7 @@ public class UserAccount {
         return username;
     }
 
-    public void setUsername(String username) { 
+    public void setUsername(String username) {
         this.username = username;
     }
 
@@ -34,7 +37,7 @@ public class UserAccount {
         return hashedPassword;
     }
 
-    public void setHashedPassword(String hashedPassword) { 
+    public void setHashedPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
 
@@ -56,8 +59,16 @@ public class UserAccount {
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     public double getWinLossRatio() {
-        if (losses == 0) return wins; // Avoid division by zero
+        if (losses == 0) return wins;
         return (double) wins / losses;
+    }
+
+    @JsonIgnore
+    public String getMatchmakingBracket() {
+        double r = getWinLossRatio();
+        if (r < 1.0) return "UNDER_1";
+        if (r < 2.0) return "ONE_TO_TWO";
+        return "TWO_PLUS";
     }
 
     @Override
