@@ -1,10 +1,23 @@
 {
   "Marcos" : {
     "username" : "Marcos",
-    "hashedPassword" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    "hashedPassword" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "wins" : 0,
+    "losses" : 0,
+    "winLossRatio" : 0.0
   },
   "Ricardo" : {
     "username" : "Ricardo",
-    "hashedPassword" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    "hashedPassword" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "wins" : 0,
+    "losses" : 0,
+    "winLossRatio" : 0.0
+  },
+  "Daniel" : {
+    "username" : "Daniel",
+    "hashedPassword" : "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+    "wins" : 2,
+    "losses" : 0,
+    "winLossRatio" : 2.0
   }
 }

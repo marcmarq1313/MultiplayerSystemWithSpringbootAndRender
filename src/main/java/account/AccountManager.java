@@ -22,9 +22,7 @@ public class AccountManager {
 
     private Map<String, UserAccount> loadAccounts() {
         File file = new File(ACCOUNT_FILE);
-        if(!file.exists()){
-            return new HashMap<>();
-        }
+        if(!file.exists()) return new HashMap<>();
         try {
             return objectMapper.readValue(file, new TypeReference<Map<String, UserAccount>>() {});
         } catch (IOException e) {
@@ -41,10 +39,10 @@ public class AccountManager {
         }
     }
 
-    public boolean registerAccount(String username, String password) {
+    public boolean registerAccount(String username, String password, int wins, int losses) {
         if(accounts.containsKey(username)) return false;
         String hashedPassword = hashPassword(password);
-        accounts.put(username, new UserAccount(username, hashedPassword));
+        accounts.put(username, new UserAccount(username, hashedPassword, wins, losses));
         saveAccounts();
         return true;
     }
@@ -54,6 +52,10 @@ public class AccountManager {
         UserAccount account = accounts.get(username);
         String hashedPassword = hashPassword(password);
         return account.getHashedPassword().equals(hashedPassword);
+    }
+
+    public UserAccount getAccount(String username) {
+        return accounts.get(username);
     }
 
     private String hashPassword(String password) {
