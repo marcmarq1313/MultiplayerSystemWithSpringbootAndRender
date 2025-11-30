@@ -1,5 +1,7 @@
 package GUI;
 
+import account.AccountManager;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -7,14 +9,21 @@ import java.awt.event.ActionListener;
 
 public class LoginScreenGUI extends JFrame {
     private JTextField usernameField;
-    private JButton loginButton;
+    private JPasswordField passwordField;
+    private JButton actionButton;
+    private JButton switchModeButton;
     private JLabel titleLabel;
     private Image backgroundImage;
+
+    private boolean isLoginMode = true;
+    private final AccountManager accountManager;
 
     private static final Color BUTTON_BLUE = new Color(0x57, 0xA6, 0xFF);
     private static final Color TEXT_WHITE = Color.WHITE;
 
     public LoginScreenGUI() {
+        accountManager = new AccountManager();
+
         setTitle("Game Lobby Login");
         setSize(600, 400);
         setLocationRelativeTo(null);
@@ -44,7 +53,7 @@ public class LoginScreenGUI extends JFrame {
         add(mainPanel);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(20, 20, 20, 20);
+        gbc.insets = new Insets(10, 20, 10, 20);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
         // Title
@@ -60,44 +69,87 @@ public class LoginScreenGUI extends JFrame {
         usernameField = new JTextField();
         usernameField.setFont(new Font("Arial", Font.PLAIN, 18));
         gbc.gridy = 1;
-        gbc.gridwidth = 2;
         mainPanel.add(usernameField, gbc);
 
-        // Login button
-        loginButton = new JButton("LOGIN");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 18));
-        loginButton.setBackground(BUTTON_BLUE);
-        loginButton.setForeground(Color.BLACK);
-        loginButton.setFocusPainted(false);
+        // Password field
+        passwordField = new JPasswordField();
+        passwordField.setFont(new Font("Arial", Font.PLAIN, 18));
         gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        mainPanel.add(loginButton, gbc);
+        mainPanel.add(passwordField, gbc);
 
-        loginButton.addActionListener(new ActionListener() {
+        // Action button (Login/Register)
+        actionButton = new JButton("LOGIN");
+        actionButton.setFont(new Font("Arial", Font.BOLD, 18));
+        actionButton.setBackground(BUTTON_BLUE);
+        actionButton.setForeground(Color.BLACK);
+        actionButton.setFocusPainted(false);
+        gbc.gridy = 3;
+        mainPanel.add(actionButton, gbc);
+
+        actionButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String username = usernameField.getText().trim();
-                if(username.isEmpty() || username.length() > 16){
-                    JOptionPane.showMessageDialog(LoginScreenGUI.this,
-                            "Invalid Username (Max 16 chars)",
-                            "Error",
-                            JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
-                openClientGUI(username);
+                handleAction();
             }
         });
+
+        // Switch mode button
+        switchModeButton = new JButton("Switch to Register");
+        switchModeButton.setFont(new Font("Arial", Font.PLAIN, 14));
+        switchModeButton.setForeground(TEXT_WHITE);
+        switchModeButton.setContentAreaFilled(false);
+        switchModeButton.setBorderPainted(false);
+        gbc.gridy = 4;
+        mainPanel.add(switchModeButton, gbc);
+
+        switchModeButton.addActionListener(e -> switchMode());
 
         // Make window resizable and components stay centered
         setMinimumSize(new Dimension(400, 300));
     }
 
-    private void openClientGUI(String username){
+    private void handleAction() {
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
+
+        if (username.isEmpty() || username.length() > 16 || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Invalid username or password", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (isLoginMode) {
+            if (accountManager.validateLogin(username, password)) {
+                openClientGUI(username);
+            } else {
+                JOptionPane.showMessageDialog(this, "Incorrect username or password", "Login Failed", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            if (accountManager.registerAccount(username, password)) {
+                JOptionPane.showMessageDialog(this, "Registration successful! You can now login.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                switchMode();
+            } else {
+                JOptionPane.showMessageDialog(this, "Username already exists", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void switchMode() {
+        isLoginMode = !isLoginMode;
+        if (isLoginMode) {
+            actionButton.setText("LOGIN");
+            switchModeButton.setText("Switch to Register");
+        } else {
+            actionButton.setText("REGISTER");
+            switchModeButton.setText("Switch to Login");
+        }
+    }
+
+    private void openClientGUI(String username) {
         try {
             GUI.ClientGUI clientGUI = new GUI.ClientGUI(username);
             clientGUI.setVisible(true);
             dispose();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
