@@ -12,13 +12,15 @@ import org.springframework.web.socket.sockjs.client.WebSocketTransport;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class MyStompClient {
+public class MyStompClient 
+{
     private static final String WS_URL = "https://multiplayersystemwithspringbootandrender.onrender.com/ws";
 
     private final StompSession session;
     private final String username;
 
-    public MyStompClient(MessageListener messageListener, String username) throws ExecutionException, InterruptedException {
+    public MyStompClient(MessageListener messageListener, String username) throws ExecutionException, InterruptedException 
+    {
         this.username = username;
 
         List<Transport> transports = List.of(new WebSocketTransport(new StandardWebSocketClient()));
@@ -32,18 +34,26 @@ public class MyStompClient {
         this.session = stompClient.connectAsync(WS_URL, sessionHandler).get();
     }
 
-    public void sendMessage(Message message) {
-        try {
+    public void sendMessage(Message message) 
+    {
+        try
+        {
             session.send("/app/message", message);
-        } catch (Exception e) {
+        } 
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }
 
-    public void disconnectUser(String username) {
-        try {
+    public void disconnectUser(String username) 
+    {
+        try
+        {
             session.send("/app/disconnect", username);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }

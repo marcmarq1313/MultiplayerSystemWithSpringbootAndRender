@@ -5,22 +5,26 @@ import GUI.ClientGUI;
 import GUI.LoginScreenGUI;
 import java.util.concurrent.ExecutionException;
 
-public class App {
+public class App 
+{
 
-    public static void main(String[] args) {
+    public static void main(String[] args) 
+    {
         SwingUtilities.invokeLater(() -> {
             // runOriginalCode();
-            runNewLoginScreen(); // Uncomment to test new login
+            runNewLoginScreen();
         });
     }
 
-    private static void runOriginalCode() {
+    private static void runOriginalCode() 
+    {
         String username = JOptionPane.showInputDialog(null,
                 "Enter Username (Max: 16 Characters): ",
                 "Chat Application",
                 JOptionPane.QUESTION_MESSAGE);
 
-        if (username == null || username.isEmpty() || username.length() > 16) {
+        if (username == null || username.isEmpty() || username.length() > 16) 
+        {
             JOptionPane.showMessageDialog(null,
                     "Invalid Username",
                     "Error",
@@ -29,15 +33,19 @@ public class App {
         }
 
         ClientGUI clientGUI = null;
-        try {
+        try 
+        {
             clientGUI = new ClientGUI(username);
-        } catch (ExecutionException | InterruptedException e) {
+        } 
+        catch (ExecutionException | InterruptedException e) 
+        {
             throw new RuntimeException(e);
         }
         clientGUI.setVisible(true);
     }
 
-    private static void runNewLoginScreen() {
+    private static void runNewLoginScreen() 
+    {
         LoginScreenGUI loginScreen = new LoginScreenGUI();
         loginScreen.setVisible(true);
     }

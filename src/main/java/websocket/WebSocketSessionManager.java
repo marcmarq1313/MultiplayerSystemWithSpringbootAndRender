@@ -7,24 +7,29 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 
 @Service
-public class WebSocketSessionManager {
+public class WebSocketSessionManager 
+{
     private final ArrayList<String> activeUsernames = new ArrayList<>();
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public WebSocketSessionManager(SimpMessagingTemplate messagingTemplate) {
+    public WebSocketSessionManager(SimpMessagingTemplate messagingTemplate)
+    {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public void addUsername(String username) {
+    public void addUsername(String username) 
+    {
         activeUsernames.add(username);
     }
 
-    public void removeUsername(String username) {
+    public void removeUsername(String username)
+    {
         activeUsernames.remove(username);
     }
 
-    public void broadcastActiveUsernames() {
+    public void broadcastActiveUsernames() 
+    {
         messagingTemplate.convertAndSend("/topic/users", activeUsernames);
         System.out.println("Broadcasting active users to /topic/users " + activeUsernames);
     }

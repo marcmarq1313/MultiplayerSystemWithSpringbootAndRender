@@ -12,7 +12,8 @@ import java.awt.event.*;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class ClientGUI extends JFrame implements MessageListener {
+public class ClientGUI extends JFrame implements MessageListener 
+{
     private JPanel connectedUsersPanel, messagePanel;
     private MyStompClient myStompClient;
     private String username;
@@ -22,13 +23,14 @@ public class ClientGUI extends JFrame implements MessageListener {
     private static final Color CSUDH_RED = new Color(0xBA, 0x0C, 0x2F);
     private static final Color CSUDH_GOLD = new Color(0xFF, 0xC7, 0x2C);
 
-    public ClientGUI(String username) throws ExecutionException, InterruptedException {
+    public ClientGUI(String username) throws ExecutionException, InterruptedException 
+    {
         super("User: " + username);
         this.username = username;
 
-        // Load background image from resources folder
         java.net.URL location = getClass().getResource("/lobby_background.jpg");
-        if(location != null){
+        if(location != null)
+        {
             backgroundImage = new ImageIcon(location).getImage();
         }
 
@@ -38,12 +40,15 @@ public class ClientGUI extends JFrame implements MessageListener {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
-        addWindowListener(new WindowAdapter() {
+        addWindowListener(new WindowAdapter() 
+        {
             @Override
-            public void windowClosing(WindowEvent e) {
+            public void windowClosing(WindowEvent e) 
+            {
                 int option = JOptionPane.showConfirmDialog(ClientGUI.this,
                         "Do you really want to leave?", "Exit", JOptionPane.YES_NO_OPTION);
-                if(option == JOptionPane.YES_OPTION){
+                if(option == JOptionPane.YES_OPTION)
+                {
                     myStompClient.disconnectUser(username);
                     dispose();
                 }
@@ -53,28 +58,33 @@ public class ClientGUI extends JFrame implements MessageListener {
         addGuiComponents();
     }
 
-    private void addGuiComponents(){
+    private void addGuiComponents()
+    {
         addConnectedUsersComponents();
         addChatComponents();
     }
 
-    private void addConnectedUsersComponents(){
-        connectedUsersPanel = new JPanel() {
+    private void addConnectedUsersComponents()
+    {
+        connectedUsersPanel = new JPanel() 
+        {
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g) 
+            {
                 super.paintComponent(g);
-                g.setColor(new Color(0,0,0,200)); // black background with slight transparency
+                g.setColor(new Color(0,0,0,200));
                 g.fillRect(0,0,getWidth(),getHeight());
             }
         };
+        
         connectedUsersPanel.setLayout(new BoxLayout(connectedUsersPanel, BoxLayout.Y_AXIS));
         connectedUsersPanel.setOpaque(false);
         connectedUsersPanel.setPreferredSize(new Dimension(250, getHeight()));
         connectedUsersPanel.setBorder(new EmptyBorder(10,10,10,10));
 
-        JLabel connectedUsersLabel = new JLabel("Players"); // change label text
+        JLabel connectedUsersLabel = new JLabel("Players");
         connectedUsersLabel.setFont(new Font("Inter", Font.BOLD, 20));
-        connectedUsersLabel.setForeground(Color.WHITE); // white lettering
+        connectedUsersLabel.setForeground(Color.WHITE);
         connectedUsersLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         connectedUsersPanel.add(connectedUsersLabel);
         connectedUsersPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -83,7 +93,8 @@ public class ClientGUI extends JFrame implements MessageListener {
     }
 
 
-    private void addChatComponents(){
+    private void addChatComponents()
+    {
         JPanel chatPanel = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -123,12 +134,19 @@ public class ClientGUI extends JFrame implements MessageListener {
                 BorderFactory.createLineBorder(CSUDH_GOLD,2),
                 BorderFactory.createEmptyBorder(5,10,5,10)
         ));
-        inputField.addKeyListener(new KeyAdapter() {
+        inputField.addKeyListener(new KeyAdapter() 
+        {
             @Override
-            public void keyTyped(KeyEvent e) {
-                if(e.getKeyChar() == KeyEvent.VK_ENTER){
+            public void keyTyped(KeyEvent e) 
+            {
+                if(e.getKeyChar() == KeyEvent.VK_ENTER)
+                {
                     String input = inputField.getText().trim();
-                    if(input.isEmpty()) return;
+                    if(input.isEmpty())
+                    {
+                    	return;
+                    }
+                    
                     inputField.setText("");
                     myStompClient.sendMessage(new Message(username, input));
                 }
@@ -141,33 +159,38 @@ public class ClientGUI extends JFrame implements MessageListener {
         getContentPane().add(chatPanel, BorderLayout.CENTER);
     }
 
-    private JPanel createChatMessageComponent(Message message){
+    private JPanel createChatMessageComponent(Message message)
+    {
         JPanel chatMessage = new JPanel();
         chatMessage.setLayout(new BoxLayout(chatMessage, BoxLayout.Y_AXIS));
         chatMessage.setOpaque(false);
         chatMessage.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 
-        // Username label with red text
         JLabel usernameLabel = new JLabel(message.getUser());
         usernameLabel.setFont(new Font("Inter", Font.BOLD, 16));
-        usernameLabel.setForeground(CSUDH_RED); // red for username text
+        usernameLabel.setForeground(CSUDH_RED);
         chatMessage.add(usernameLabel);
 
-        // Message label with yellow text
         JLabel messageLabel = new JLabel("<html><body style='width:" + (0.6 * getWidth()) + "px'>" +
                 message.getMessage() + "</body></html>");
         messageLabel.setFont(new Font("Inter", Font.PLAIN, 16));
-        messageLabel.setForeground(CSUDH_GOLD); // yellow for chat text
+        messageLabel.setForeground(CSUDH_GOLD);
         chatMessage.add(messageLabel);
 
         chatMessage.add(Box.createRigidArea(new Dimension(0,5)));
+        
         return chatMessage;
     }
 
 
     @Override
-    public void onMessageReceive(Message message){
-        if(messagePanel == null) return;
+    public void onMessageReceive(Message message)
+    {
+        if(messagePanel == null)
+        {
+        	return;
+        }
+        
         messagePanel.add(createChatMessageComponent(message));
         revalidate();
         repaint();
@@ -175,10 +198,15 @@ public class ClientGUI extends JFrame implements MessageListener {
     }
 
     @Override
-    public void onActiveUsersUpdated(List<String> users) {
-        if(connectedUsersPanel == null) return;
+    public void onActiveUsersUpdated(List<String> users) 
+    {
+        if(connectedUsersPanel == null)
+        {
+        	return;
+        }
 
-        if(connectedUsersPanel.getComponents().length >= 2){
+        if(connectedUsersPanel.getComponents().length >= 2)
+        {
             connectedUsersPanel.remove(1);
         }
 
@@ -186,10 +214,11 @@ public class ClientGUI extends JFrame implements MessageListener {
         userListPanel.setLayout(new BoxLayout(userListPanel, BoxLayout.Y_AXIS));
         userListPanel.setOpaque(false);
 
-        for(String user : users){
+        for(String user : users)
+        {
             JLabel userLabel = new JLabel(user);
             userLabel.setFont(new Font("Inter", Font.BOLD, 16));
-            userLabel.setForeground(CSUDH_RED); // red for player names
+            userLabel.setForeground(CSUDH_RED);
             userListPanel.add(userLabel);
             userListPanel.add(Box.createRigidArea(new Dimension(0,5)));
         }
@@ -200,12 +229,20 @@ public class ClientGUI extends JFrame implements MessageListener {
     }
 
 
-    private void updateMessageSize(){
-        if(messagePanel == null) return;
-        for(Component component : messagePanel.getComponents()){
-            if(component instanceof JPanel){
+    private void updateMessageSize()
+    {
+        if(messagePanel == null)
+        {
+        	return;
+        }
+        
+        for(Component component : messagePanel.getComponents())
+        {
+            if(component instanceof JPanel)
+            {
                 JPanel chatMessage = (JPanel) component;
-                if(chatMessage.getComponentCount() > 1 && chatMessage.getComponent(1) instanceof JLabel){
+                if(chatMessage.getComponentCount() > 1 && chatMessage.getComponent(1) instanceof JLabel)
+                {
                     JLabel messageLabel = (JLabel) chatMessage.getComponent(1);
                     String text = messageLabel.getText().replaceAll("<html><body style='width:\\d+\\.0*px'>","")
                             .replaceAll("</body></html>","");
